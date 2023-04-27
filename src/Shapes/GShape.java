@@ -14,6 +14,9 @@ abstract public class GShape{
 	}
 	public void addPoint(int x1, int y1) {
 	}
+	public Point getPoint(Point point) {
+		return point;
+	}
 	
   public boolean onShape(Point p) {
 		return shape.contains(p);

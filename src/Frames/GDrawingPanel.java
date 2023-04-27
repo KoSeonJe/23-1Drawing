@@ -198,17 +198,15 @@ public class GDrawingPanel extends JPanel {
 			if(eDrawingState == EdrawingState.eIdle) {
 				if(toolBar.GetESelectedShape() == EShape.eSelect) {
 					currentShape = onShape(new Point(e.getX(), e.getY()));
+					
 					if(currentShape ==null) {
 						eDrawingState=EdrawingState.eSelecting;
 						prepareTransforming(e.getX(), e.getY());
-
 					}else {
 						//resize, rotate,move
 						eDrawingState=EdrawingState.eMoving;
 						prepareTransforming(e.getX(), e.getY());
-
 					}
-
 					
 				}else {
 			if(!(toolBar.GetESelectedShape().getGShape() instanceof GPolygon)) {

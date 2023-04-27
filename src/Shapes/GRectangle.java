@@ -44,7 +44,7 @@ public class GRectangle extends GShape{
 	public void setPoint(int x, int y) {
 		// TODO Auto-generated method stub
 		//도형의 프레스한 점.
-		Rectangle rectangle = (Rectangle)shape;
+//		Rectangle rectangle = (Rectangle)shape;
 		this.px=x;
 		this.py=y;
 //		this.ox=(int) rectangle.getX();
