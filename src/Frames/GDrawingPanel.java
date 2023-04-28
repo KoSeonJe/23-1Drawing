@@ -1,15 +1,13 @@
-
-
-
 package Frames;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Vector;
+import java.util.Stack;
 
 import javax.swing.JPanel;
 
@@ -28,18 +26,16 @@ public class GDrawingPanel extends JPanel {
 		eRotate
 	}
 	private EdrawingState eDrawingState;
-	private Vector<GShape> shapes;
+	private Stack<GShape> shapes;
 	private GShape currentShape;
-//	private Rectangle movedRect;
 	private GToolBar toolBar;
 	public void setToolBar(GToolBar toolBar) {
 		this.toolBar = toolBar;
 	}
-	
 	public GDrawingPanel() {
 		super();
 		this.eDrawingState= EdrawingState.eIdle;
-		this.shapes= new Vector<GShape>();
+		this.shapes= new Stack<GShape>();
 //		movedRect = new Rectangle(0,0,0,0);
 
 		currentShape = null;
@@ -49,6 +45,12 @@ public class GDrawingPanel extends JPanel {
 	this.addMouseListener(meh);
 	this.addMouseMotionListener(meh);
 	}
+	public Stack<GShape> getStack(){
+		return this.shapes;
+	}
+	public void setStack(Stack<GShape> shapes){
+		this.shapes=shapes;
+	}
 	
 	public void paint(Graphics graphics) {
 		//오버라이딩을 시켜버림
@@ -56,10 +58,7 @@ public class GDrawingPanel extends JPanel {
 		for(GShape shape : this.shapes) {
 			shape.draw(graphics);
 		}
-
-
 	}
-	
 	public GShape onShape(Point point) {
 		for(GShape rectangle : shapes) {
 			if(rectangle.onShape(point)) {
@@ -68,12 +67,28 @@ public class GDrawingPanel extends JPanel {
 		}
 		return null;
 	}
+	
+	public boolean onShape2(Point point) {
+		for(GShape rectangle : shapes) {
+			if(rectangle.onShape(point)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void ChangeCursor(Point p) {
+		Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		if(onShape2(p)) {
+			cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);	
+			}
+		setCursor(cursor);
+	}
 
 	public void prepareTransforming(int x, int y) {
 		if(eDrawingState == EdrawingState.eDrawing) {
 			currentShape = toolBar.GetESelectedShape().getGShape().clone();
 			currentShape.setShape(x, y, x, y);
-			
 		}else if(eDrawingState == EdrawingState.eSelecting) {
 			currentShape = toolBar.GetESelectedShape().getGShape().clone();
 			currentShape.setShape(x, y, x, y);
@@ -95,9 +110,11 @@ public class GDrawingPanel extends JPanel {
 			currentShape.resizePoint(x,y);
 			currentShape.draw(graphics);
 		}else if(eDrawingState == EdrawingState.eMoving) {
+			if(x<850&&y<600&&x>100&&y>100) {
 			currentShape.draw(graphics);
 			currentShape.movePoint(x,y);
 			currentShape.draw(graphics);
+			}
 		}
 	}
 	public void ContinueTransforming(int x, int y) {
@@ -136,12 +153,8 @@ public class GDrawingPanel extends JPanel {
 					if(currentShape.onShape(new Point(e.getX(), e.getY()))){
 						repaint();
 						keepTransforming(e.getX(),e.getY());
-
-
 					}
 				}
-			
-//repaint();
 		}
 
 		@Override
@@ -151,7 +164,10 @@ public class GDrawingPanel extends JPanel {
 					keepTransforming(e.getX(),e.getY());
 				}
 				
-				}			
+				}
+			if(eDrawingState == EdrawingState.eIdle&&toolBar.GetESelectedShape()==EShape.eSelect) {
+			ChangeCursor(e.getPoint());
+			}
 		}
 
 		@Override
@@ -169,7 +185,6 @@ public class GDrawingPanel extends JPanel {
 			if(eDrawingState == EdrawingState.eDrawing) {
 				finalizeTransforming(e.getX(), e.getY());
 				eDrawingState = EdrawingState.eIdle;
-
 				}
 		}
 
@@ -187,15 +202,15 @@ public class GDrawingPanel extends JPanel {
 					ContinueTransforming(e.getX(),e.getY());
 				}
 			}else if(eDrawingState==EdrawingState.eMoving) {
-				System.out.println("호출");
 			}
-				
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			// TODO Auto-generated method stub
-			if(eDrawingState == EdrawingState.eIdle) {
+			if(!(eDrawingState == EdrawingState.eIdle)) {
+				return;
+			}
 				if(toolBar.GetESelectedShape() == EShape.eSelect) {
 					currentShape = onShape(new Point(e.getX(), e.getY()));
 					
@@ -215,7 +230,7 @@ public class GDrawingPanel extends JPanel {
 			}
 				
 			}
-			}
+			
 
 		}
 

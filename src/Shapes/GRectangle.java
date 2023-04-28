@@ -39,7 +39,6 @@ public class GRectangle extends GShape{
 
 	}
 	
-
 	@Override
 	public void setPoint(int x, int y) {
 		// TODO Auto-generated method stub

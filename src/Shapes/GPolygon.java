@@ -1,5 +1,6 @@
 package Shapes;
 
+import java.awt.Point;
 import java.awt.Polygon;
 
 public class GPolygon extends GShape {
