@@ -1,6 +1,5 @@
 package Shapes;
 
-import java.awt.Point;
 import java.awt.Polygon;
 
 public class GPolygon extends GShape {
@@ -9,7 +8,11 @@ public class GPolygon extends GShape {
 		// TODO Auto-generated constructor stub
 
 	}
-
+	@Override
+	public GShape clone() {
+		// TODO Auto-generated method stub
+		return new GPolygon();
+	}
 	@Override
 	public void resizePoint(int x2, int y2) {//마지막 점 결정
 		Polygon polygon = (Polygon)shape;
@@ -29,13 +32,6 @@ public class GPolygon extends GShape {
 		polygon.addPoint(x2, y2);
 
 	}
-
-	@Override
-	public GShape clone() {
-		// TODO Auto-generated method stub
-		return new GPolygon();
-	}
-
 	@Override
 	public void movePoint(int x, int y) {
 		// TODO Auto-generated method stub

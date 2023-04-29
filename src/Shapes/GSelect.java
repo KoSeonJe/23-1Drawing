@@ -4,7 +4,6 @@ public class GSelect extends GRectangle{
 	
 	public GSelect(){
 	}
-	
 
 
 }

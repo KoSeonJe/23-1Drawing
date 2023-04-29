@@ -23,12 +23,12 @@ public class GToolBar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 // 서수 타입
 	public enum EShape{
-		eSelect(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\OIP.jpeg"), new GSelect()),
-		eRectangle(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\Rectangle.png"), new GRectangle()),
-		eOval(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\Oval.png"), new GOval()),
-		eLine(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\Line.png"), new GLine()),
-		ePolygon(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\Polygon.png"), new GPolygon()),
-		eFreeLine(new ImageIcon("C:\\Users\\USER\\OneDrive\\바탕 화면\\패턴 중심 전공 자료\\FreeLine.png"), new GFreeLine())
+		eSelect(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\OIP.jpeg"), new GSelect()),
+		eRectangle(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Rectangle.png"), new GRectangle()),
+		eOval(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Oval.png"), new GOval()),
+		eLine(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Line.png"), new GLine()),
+		ePolygon(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Polygon.png"), new GPolygon()),
+		eFreeLine(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\FreeLine.png"), new GFreeLine())
 		;
 		
 		private ImageIcon image;
@@ -55,6 +55,47 @@ public class GToolBar extends JToolBar {
 	
 	}
 	
+	private boolean fillClicked;
+	public boolean fillClicked() {
+		return this.fillClicked;
+	}
+	private boolean RedColorClicked;
+	public boolean RedColorClicked() {
+		return this.RedColorClicked;
+	}
+	private boolean ThickClicked;
+	public boolean ThickClicked() {
+		return this.ThickClicked;
+	}
+	public enum EShapeChange{
+		eFill("Fill"),
+		eColor("RedColor"),
+		eThick("Thick");
+		private String name;
+		private EShapeChange(String name) {
+			this.name = name;
+		}
+		public String getName() {
+			return this.name;
+		}
+	}
+	
+	public enum ETool{
+		eUndo("ShapeDelete"),
+		eRedo("ShapeRestore"),
+		eClear("Clear"),
+		;
+		
+		private String name;
+		private ETool(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return this.name;
+		}
+	}
+	
 	private GDrawingPanel drawingPanel;
 	private Stack<GShape> shapes;
 	public void setGDrawingPanel(GDrawingPanel drawingPanel) {
@@ -67,6 +108,7 @@ public class GToolBar extends JToolBar {
 	}
 	public GToolBar() {
 		super();
+		fillClicked=false;
 		ActionHandler ah = new ActionHandler();
 		bg = new ButtonGroup();
 		
@@ -74,7 +116,7 @@ public class GToolBar extends JToolBar {
 			if(eButtonShape == EShape.eSelect) {
 				continue;
 			}
-			JRadioButton buttonShape = new JRadioButton();
+			JButton buttonShape = new JButton();
 			buttonShape.setPreferredSize(new Dimension(eButtonShape.getImage().getIconWidth(),eButtonShape.getImage().getIconHeight()));
 			buttonShape.setIcon(eButtonShape.getImage());
 			this.add(buttonShape);
@@ -84,20 +126,22 @@ public class GToolBar extends JToolBar {
 			buttonShape.addActionListener(ah);
 		}
 		resetESelectedShape();
-		JButton undo = new JButton("Undo");
-		this.add(undo);
-		undo.addActionListener(ah);
-		undo.setActionCommand("Undo");
+		addSeparator();
+
+		for(EShapeChange eSH : EShapeChange.values()) {
+			JRadioButton tool = new JRadioButton(eSH.getName());
+			this.add(tool);
+			tool.addActionListener(ah);
+			tool.setActionCommand(eSH.getName());
+		}
 		
-		JButton redo = new JButton("Redo");
-		this.add(redo);
-		redo.addActionListener(ah);
-		redo.setActionCommand("Redo");
-		
-		JButton clear = new JButton("Clear");
-		this.add(clear);
-		clear.addActionListener(ah);
-		clear.setActionCommand("Clear");
+		addSeparator();
+		for(ETool etool : ETool.values()) {
+			JButton tool = new JButton(etool.getName());
+			this.add(tool);
+			tool.addActionListener(ah);
+			tool.setActionCommand(etool.getName());
+		}
 	}
 	private class ActionHandler implements ActionListener{
 		//하나의 핸들러에 모든 버튼 공유
@@ -106,7 +150,7 @@ public class GToolBar extends JToolBar {
 		int i=0;
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getActionCommand()=="Undo") {
+			if(e.getActionCommand()=="ShapeDelete") {
 				if(shapes.isEmpty()) {
 					return;
 				}
@@ -115,7 +159,7 @@ public class GToolBar extends JToolBar {
 				i++;
 				return;
 			}
-			if(e.getActionCommand()=="Redo") {
+			if(e.getActionCommand()=="ShapeRestore") {
 				if (i <= 0 || gShape[i - 1] == null) {
 	                // 이전에 Undo된 작업이 없거나 Redo할 도형이 없는 경우
 	                return;
@@ -128,12 +172,34 @@ public class GToolBar extends JToolBar {
 			}
 			if(e.getActionCommand()=="Clear") {
 				shapes.clear();
-
 				drawingPanel.repaint();
 				return;
 			}
+			if(e.getActionCommand()=="Fill") {//클릭 되었는지 체크
+				if(fillClicked) {
+					fillClicked=false;
+					return;
+				}
+				fillClicked=true;
+				return;			
+			}
+			if(e.getActionCommand()=="RedColor") {//클릭되었는지 체크
+				if(RedColorClicked) {
+					RedColorClicked=false;
+					return;
+				}
+				RedColorClicked=true;
+				return;			
+			}
+			if(e.getActionCommand()=="Thick") {//클릭되었는지 체크
+				if(ThickClicked) {
+					ThickClicked=false;
+					return;
+				}
+				ThickClicked=true;
+				return;			
+			}
 			eSelectedShape =EShape.valueOf(e.getActionCommand());
-			
 		}
 		
 	}

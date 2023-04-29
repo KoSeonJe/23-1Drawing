@@ -34,9 +34,9 @@ public class GMainFrame extends JFrame {
 		this.drawingPanel = new GDrawingPanel();
 		this.add(drawingPanel, BorderLayout.CENTER);
 		drawingPanel.setToolBar(toolBar);
-		//attribute
 		toolBar.setGDrawingPanel(drawingPanel);
-		
+
+		//attribute		
 		this.setSize(1000,800);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
