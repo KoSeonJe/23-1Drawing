@@ -1,17 +1,21 @@
 package Shapes;
 
 import java.awt.Polygon;
+import java.util.Vector;
 
 public class GPolygon extends GShape {
 
 	public GPolygon() {
 		// TODO Auto-generated constructor stub
-
+		
 	}
 	@Override
 	public GShape clone() {
 		// TODO Auto-generated method stub
 		return new GPolygon();
+	}
+	@Override
+	public void resizingPoint(int x, int y) {
 	}
 	@Override
 	public void resizePoint(int x2, int y2) {//마지막 점 결정
@@ -30,6 +34,8 @@ public class GPolygon extends GShape {
 		Polygon polygon = (Polygon)shape;
 		polygon.addPoint(x1, y1);
 		polygon.addPoint(x2, y2);
+		  anchors=new Vector<GShape>();
+
 
 	}
 	@Override
@@ -48,6 +54,8 @@ public class GPolygon extends GShape {
 //		this.shape = polygon;
 		px=x;
 		py=y;
+		  anchors=new Vector<GShape>();
+
 	}
 
 	@Override
@@ -57,5 +65,6 @@ public class GPolygon extends GShape {
 		this.py=y;
 
 	}
+	
 	
 }

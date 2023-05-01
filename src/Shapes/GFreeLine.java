@@ -54,5 +54,10 @@ public class GFreeLine extends GShape{
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void resizingPoint(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

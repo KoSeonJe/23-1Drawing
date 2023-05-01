@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 
 import Frames.GToolBar.EShape;
 import Shapes.GFreeLine;
-import Shapes.GOval;
 import Shapes.GPolygon;
 import Shapes.GShape;
 
@@ -30,7 +29,7 @@ public class GDrawingPanel extends JPanel {
 	}
 	private EdrawingState eDrawingState;
 	private Stack<GShape> shapes;
-//	private Vector<GOval> anchors;
+	private Vector<GShape> anchors;
 //	private GOval currentAnchor;
 	private GShape currentShape;
 	private GToolBar toolBar;
@@ -58,9 +57,10 @@ public class GDrawingPanel extends JPanel {
 	public void setStack(Stack<GShape> shapes){
 		this.shapes=shapes;
 	}
-//	public void setAnchors() {
-//		this.anchors = this.currentShape.getAnchors();
-//	}
+	public void setAnchors() {
+		if(this.currentShape!=null)
+		this.anchors = this.currentShape.getAnchors();
+	}
 	
 	public void paint(Graphics graphics) {
 		//오버라이딩을 시켜버림
@@ -82,7 +82,7 @@ public class GDrawingPanel extends JPanel {
 		}
 		return null;
 	}
-	
+
 	public boolean onShape2(Point point) {
 		for(GShape rectangle : shapes) {
 			if(rectangle.onShape(point)) {
@@ -91,14 +91,16 @@ public class GDrawingPanel extends JPanel {
 		}
 		return false;
 	}
-//	public GOval onAnchor(Point point) {
-//		for(GOval anchor : anchors) {
-//			if(anchor.onShape(point)) {
-//				return anchor;
-//			}
-//		}
-//		return null;
-//	}
+	public boolean onAnchor(Point point) {
+
+		for(GShape anchor : anchors) {
+			if(anchor.onShape(point)) {
+				currentShape.setAnchor(anchor);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public void ChangeCursor(Point p) {
 		Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -151,6 +153,10 @@ public class GDrawingPanel extends JPanel {
 				currentShape.movePoint(500,350);
 				currentShape.draw(graphics);
 			}
+		}else if(eDrawingState ==EdrawingState.eResizing) {
+			currentShape.draw(graphics);
+			currentShape.resizingPoint(x,y);
+			currentShape.draw(graphics);
 		}
 	}
 	public void ContinueTransforming(int x, int y) {
@@ -166,6 +172,9 @@ public class GDrawingPanel extends JPanel {
 		currentShape.draw(graphics);	
 		
 		}else if(eDrawingState==EdrawingState.eMoving){
+			
+		}else if(eDrawingState==EdrawingState.eResizing) {
+//			shapes.add(currentShape);
 		}
 		currentShape=null;
 		toolBar.resetESelectedShape();
@@ -186,6 +195,8 @@ public class GDrawingPanel extends JPanel {
 					return;
 				}
 				keepTransforming(e.getX(),e.getY());
+//				repaint();
+
 				}else if(eDrawingState == EdrawingState.eSelecting) {
 					keepTransforming(e.getX(),e.getY());
 	
@@ -194,6 +205,10 @@ public class GDrawingPanel extends JPanel {
 						repaint();
 						keepTransforming(e.getX(),e.getY());
 					}
+					
+				}else if(eDrawingState==EdrawingState.eResizing) {
+					repaint();
+					keepTransforming(e.getX(),e.getY());
 				}
 		}
 		
@@ -234,8 +249,6 @@ public class GDrawingPanel extends JPanel {
 				
 				eDrawingState=EdrawingState.eDrawing;
 				prepareTransforming(e.getX(), e.getY());
-
-
 			}
 			
 			}else if(eDrawingState==EdrawingState.eDrawing) {
@@ -251,19 +264,14 @@ public class GDrawingPanel extends JPanel {
 			if(!(eDrawingState == EdrawingState.eIdle)) {
 				return;
 			}
-			shapeSelected=false;//도형 선택안됨
-
 				if(toolBar.GetESelectedShape() == EShape.eSelect) {
 					currentShape = onShape(new Point(e.getX(), e.getY()));
-//					setAnchors();
-//					currentAnchor = onAnchor(new Point(e.getX(), e.getY()));
-//					if(currentAnchor!=null) {
-//						eDrawingState=EdrawingState.eDrawing;
-//						
-//					}
+					shapeSelected=false;//도형 선택안됨
+
 					if(currentShape ==null) {
 						eDrawingState=EdrawingState.eSelecting;
 						prepareTransforming(e.getX(), e.getY());
+						
 					}else {
 						if(toolBar.fillClicked()) {//클릭되었는지 체크
 							currentShape.Fill();
@@ -271,12 +279,24 @@ public class GDrawingPanel extends JPanel {
 							return;
 						}
 						shapeSelected=true; // 도형이 선택됨.
-//						currentShape.getSelected(shapeSelected);
+						currentShape.getSelected(shapeSelected);
 						//resize, rotate,move
 						eDrawingState=EdrawingState.eMoving;
 						prepareTransforming(e.getX(), e.getY());
 					}
 					repaint();
+//					if(currentShape.onBounds(e.getPoint())) {
+//						System.out.println("호출");
+//						shapeSelected=true; // 도형이 선택됨.
+//					}
+					if(!shapeSelected)return;
+					setAnchors();
+//					System.out.println("호출");
+
+					if(onAnchor(new Point(e.getX(), e.getY()))) {
+//						System.out.println("in호출");
+						eDrawingState=EdrawingState.eResizing;
+					};
 
 					
 				}else {
@@ -305,8 +325,10 @@ public class GDrawingPanel extends JPanel {
 					eDrawingState=EdrawingState.eIdle;				
 				}else if(eDrawingState == EdrawingState.eMoving) {
 					finalizeTransforming(e.getX(), e.getY());
-
 					eDrawingState=EdrawingState.eIdle;				
+				}else if(eDrawingState == EdrawingState.eResizing) {
+					finalizeTransforming(e.getX(), e.getY());
+					eDrawingState=EdrawingState.eIdle;
 				}
 		}
 		@Override

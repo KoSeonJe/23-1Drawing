@@ -2,6 +2,7 @@ package Shapes;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.Vector;
 
 public class GOval extends GShape{
 	public GOval(){
@@ -11,9 +12,32 @@ public class GOval extends GShape{
 	int h;
 
 	public Shape newAnchor(int x, int y) {
-		Shape ellipse2D= new Ellipse2D.Double(x, y, 16, 16);
-		return ellipse2D;
+		this.shape= new Ellipse2D.Double(x, y, 16, 16);
+		return shape;
 	}
+	@Override
+	public void resizingPoint(int x, int y) {
+		// TODO Auto-generated method stub
+		Ellipse2D ellipse2D = (Ellipse2D)shape;
+		if(anchor==anchors.get(3)) {
+			int currentX= Math.abs(x-ox);
+			if(x>ox) {
+				ellipse2D.setFrame(ox,oy,currentX, h);
+			}else {
+				ellipse2D.setFrame(x,oy,currentX, h);
+			}
+			w=currentX;
+		}else if(anchor==anchors.get(5)) {
+			int currentY= Math.abs(y-oy);
+			if(y>oy) {
+				ellipse2D.setFrame(ox,oy,w,currentY);
+			}else {
+				ellipse2D.setFrame(ox,y, w, currentY);
+			}
+			h=currentY;
+		}
+	}
+
 	@Override
 	public void resizePoint(int x2, int y2) {
 		Ellipse2D ellipse2D = (Ellipse2D)shape;
@@ -38,6 +62,8 @@ public class GOval extends GShape{
 		this.shape= new Ellipse2D.Double(x1, y1, x2-x1, y2-y1);
 		this.ox=x1;
 		this.oy=y1;
+		  anchors=new Vector<GShape>();
+
 	}
 
 
@@ -53,7 +79,8 @@ public class GOval extends GShape{
 		// TODO Auto-generated method stub
 		Ellipse2D ellipse2D = (Ellipse2D)shape;
 		ellipse2D.setFrame(x-(px-ox),y-(py-oy),w,h);
-		
+		  anchors=new Vector<GShape>();
+
 	}
 
 
@@ -67,5 +94,5 @@ public class GOval extends GShape{
 		this.oy=(int) ellipse2D.getY();
 	
 	}
-
+	
 }

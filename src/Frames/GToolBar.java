@@ -23,12 +23,12 @@ public class GToolBar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 // 서수 타입
 	public enum EShape{
-		eSelect(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\OIP.jpeg"), new GSelect()),
-		eRectangle(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Rectangle.png"), new GRectangle()),
-		eOval(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Oval.png"), new GOval()),
-		eLine(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Line.png"), new GLine()),
-		ePolygon(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\Polygon.png"), new GPolygon()),
-		eFreeLine(new ImageIcon("C:\\Users\\USER\\Pattern-one\\[중간고사]60201659_고선제\\src\\FreeLine.png"), new GFreeLine())
+		eSelect(new ImageIcon("src\\OIP.jpeg"), new GSelect()),
+		eRectangle(new ImageIcon("src\\Rectangle.png"), new GRectangle()),
+		eOval(new ImageIcon("src\\Oval.png"), new GOval()),
+		eLine(new ImageIcon("src\\Line.png"), new GLine()),
+		ePolygon(new ImageIcon("src\\Polygon.png"), new GPolygon()),
+		eFreeLine(new ImageIcon("src\\FreeLine.png"), new GFreeLine())
 		;
 		
 		private ImageIcon image;

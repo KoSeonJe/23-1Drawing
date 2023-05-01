@@ -14,19 +14,20 @@ abstract public class GShape{
 	protected int ox, oy;
 	protected int px, py;
 	protected Graphics2D graphics2d;
-//	protected Vector<GOval> anchors;
+	protected Vector<GShape> anchors;
+	protected GShape anchor;
 	public GShape(){
 	}
 	public void addPoint(int x1, int y1) {
 	}
-//	public Point getPoint(Point point) {
-//		return point;
-//	}
+
 	
   public boolean onShape(Point p) {
 		return shape.contains(p);
- 
   };
+  public boolean onBounds(Point p) {
+	  return this.shape.getBounds().contains(p); 
+  }
   boolean Fillchecked = false;
   public void Fill() {
 	  if(!Fillchecked) {
@@ -43,10 +44,14 @@ abstract public class GShape{
 	  this.thickClicked=thickClicked;
   }
   
-//  boolean selcted;
-//  public void getSelected(boolean selected) {
-//	  this.selcted=selected;
-//  }
+  boolean selcted;
+  public void getSelected(boolean selected) {
+	  this.selcted=selected;
+  }
+  public void setAnchor(GShape anchor) {
+		// TODO Auto-generated method stub
+		this.anchor=anchor;
+	}
   
   public void drawBounds() {
 	  this.graphics2d.setColor(Color.black);
@@ -72,21 +77,19 @@ abstract public class GShape{
 	  this.graphics2d.setColor(Color.gray);
 //	    this.graphics2d.draw(anchor.newAnchor(x, y));
 		this.graphics2d.fill(anchor.newAnchor(x, y));
-//		anchors.add(anchor);
+		if(anchors.size()<7) {
+		anchors.add(anchor);
+		}
   }
-//  public Vector<GOval> getAnchors(){
-//	  for(int i=0; i<anchors.size(); i++) {
-//		  System.out.println(anchors.get(i));
-//	  }
-//	  return this.anchors;
-//  }
+  public Vector<GShape> getAnchors(){
+	  
+	  return this.anchors;
+  }
   
 
 
 public void draw(Graphics graphics) {
-//	    anchors=new Vector<GOval>();
 		this.graphics2d = (Graphics2D) graphics;
-		
 		graphics2d.setColor(Color.black);
 		graphics2d.setStroke(new BasicStroke(1,BasicStroke.CAP_SQUARE,0));
 		
@@ -96,16 +99,16 @@ public void draw(Graphics graphics) {
 		if(colorClicked) 
 		graphics2d.setColor(Color.RED);
 		
-		if(Fillchecked)
-			this.graphics2d.fill(this.shape);
-		
-		
+		if(Fillchecked) {
+		 this.graphics2d.fill(this.shape);
+		}else {
 		graphics2d.draw(shape);
-		
+		}
 	}
 abstract public GShape clone();
 public abstract void setShape(int x1, int y1, int x2, int y2);
 public abstract void resizePoint(int x, int y);
 public abstract void movePoint(int x, int y);
 public abstract void setPoint(int x, int y);
+public abstract void resizingPoint(int x, int y);
 }
